@@ -1,0 +1,295 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
+local Window = Library.CreateLib("EfekanSRP GUI", "DarkTheme")
+
+local RandomPetsWorld = Window:NewTab("Random Pets World")
+local RandomPetsWorldSection = RandomPetsWorld:NewSection("Main")
+
+local MarvellousPlayground = Window:NewTab("Marvellous Playground")
+local MarvellousPlaygroundSection = MarvellousPlayground:NewSection("Main")
+
+local GasStation = Window:NewTab("Gas Station Simulator")
+local GSection = GasStation:NewSection("Main")
+
+local UserInputService = game:GetService("UserInputService");
+local p = game.Players.LocalPlayer
+
+--Toggle Feed
+getgenv().Feed = false
+RandomPetsWorldSection:NewToggle("Auto Feed", "Feeds your all equipped pets", function(state)
+    if state then
+		getgenv().Feed = true
+		while getgenv().Feed do
+			local pets = game.Players.LocalPlayer.Pets:GetChildren()
+			game:GetService("ReplicatedStorage").CreatureSystem.Events.FeedCreature:InvokeServer(pets[#pets].Name)
+			wait(0.1)
+		end
+	end
+    if not state then
+        getgenv().Feed = false
+    end
+end)
+
+--Toggle Auto collect food
+getgenv().Collect = false
+RandomPetsWorldSection:NewToggle("Auto Collect Food", "Collects the food at every zone", function(state)
+    if state then
+		getgenv().Collect = true
+		while getgenv().Collect do
+			wait(0.2)
+			local function tpcha(target)
+			game:GetService("ReplicatedStorage").PetManagementSystem.CollectFoodRequest:FireServer(1)
+			print("TpaCha")
+			local player = game.Players.LocalPlayer
+			local Cha = player.Character
+			Cha.HumanoidRootPart.CFrame = CFrame.new(target.Position)
+			end
+
+
+			for i,v in pairs(game.Workspace.SpawnPoints:GetChildren()) do
+				print(v)
+				if v then
+					for f,t in pairs(v:GetChildren()) do
+						if t.Name == "Food" and t:FindFirstChild("Current") then
+							print(t)
+							local cr = t:FindFirstChild("Current")
+							for e,c in pairs(cr:GetChildren()) do
+								if string.match(c.Name,"Meshes") then
+									print(c)
+									tpcha(c)
+									game:GetService("ReplicatedStorage").PetManagementSystem.CollectFoodRequest:FireServer(1)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+    if not state then
+        getgenv().Collect = false
+    end
+end)
+
+RandomPetsWorldSection:NewLabel("Your pet needs to be atleast 2 level or higher")
+
+getgenv().Attack = false
+RandomPetsWorldSection:NewToggle("Auto Attack", "Auto Attack the monsters that are at your current zone", function(state)
+    if state then
+		getgenv().Attack = true
+		while getgenv().Attack do
+			local cur = game.Players.LocalPlayer.CurrentZone.Value
+
+			local sp = game.Workspace.SpawnPoints
+
+			for i,v in pairs(sp:GetChildren()) do
+				if string.find(v.Name,cur,1) then
+					if not string.find(v.Name,0,2) then
+						print(v)
+						for e,c in pairs(v:GetChildren()) do
+							if string.match(c.Name,"Spawn") then
+							game:GetService("ReplicatedStorage").PetManagementSystem.AttackMobsRequest:FireServer(c)
+							end
+						end
+					end
+				end
+			end
+			wait(4)
+		end
+	end
+    if not state then
+        getgenv().Attack = false
+    end
+end)
+getgenv().Coin = false
+RandomPetsWorldSection:NewToggle("Auto Collect Coin", "Collects Coin at everywhere", function(state)
+    if state then
+		getgenv().Coin = true
+		while getgenv().Coin do
+			local function tpcha(target)
+				print("TpaCha")
+				local player = game.Players.LocalPlayer
+				local Cha = player.Character
+				Cha.HumanoidRootPart.CFrame = CFrame.new(target.Position)
+			end
+
+			for i,v in pairs(game.Workspace:GetChildren()) do
+				if v:IsA("MeshPart") and v.Name == "Coin_Gold" then
+				tpcha(v)		
+				end
+			end
+			wait(0.1)
+		end
+	end
+    if not state then
+        getgenv().Coin = false
+    end
+end)
+getgenv().Diamond = false
+RandomPetsWorldSection:NewToggle("Auto Collect Diamond", "Collects Diamond at everywhere", function(state)
+    if state then
+		getgenv().Diamond = true
+		while getgenv().Diamond do
+			local function tpcha(target)
+				print("TpaCha")
+				local player = game.Players.LocalPlayer
+				local Cha = player.Character
+				Cha.HumanoidRootPart.CFrame = CFrame.new(target.Position)
+			end
+
+			for i,v in pairs(game.Workspace:GetChildren()) do
+				if v:IsA("MeshPart") and v.Name == "Diamond" then
+				tpcha(v)		
+				end
+			end
+			wait(0.1)
+		end
+	end
+    if not state then
+        getgenv().Diamond = false
+    end
+end)
+getgenv().Small = false
+RandomPetsWorldSection:NewToggle("Auto Collect Gems", "Collects Gems at everywhere", function(state)
+    if state then
+		getgenv().Small = true
+		while getgenv().Small do
+			local function tpcha(target)
+				print("TpaCha")
+				local player = game.Players.LocalPlayer
+				local Cha = player.Character
+				Cha.HumanoidRootPart.CFrame = CFrame.new(target.Position)
+			end
+
+			for i,v in pairs(game.Workspace:GetChildren()) do
+				if v:IsA("MeshPart") and v.Name == "Small" then
+				tpcha(v)		
+				end
+			end
+			wait(0.1)
+		end
+	end
+    if not state then
+        getgenv().Small = false
+    end
+end)
+
+MarvellousPlaygroundSection:NewButton("Thanos", "Spawn as Thanos", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.Thanos)
+end)
+
+MarvellousPlaygroundSection:NewButton("Wanda", "Spawn as Wanda", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.Wanda)
+end)
+
+MarvellousPlaygroundSection:NewButton("GigaChad", "Spawn as GigaChad", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.GigaChad)
+end)
+
+MarvellousPlaygroundSection:NewButton("GigaWomen", "Spawn as GigaWomen", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.Skins.GigaChad.Skin1)
+end)
+
+MarvellousPlaygroundSection:NewButton("Saitama", "Spawn as Saitama", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.Skins.GigaChad.Skin2)
+end)
+
+MarvellousPlaygroundSection:NewButton("Vecna", "Spawn as Vecna", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.Vecna)
+end)
+
+MarvellousPlaygroundSection:NewButton("BlackBolt", "Spawn as BlackBolt", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.BlackBolt)
+end)
+
+MarvellousPlaygroundSection:NewButton("DareDevil", "Spawn as DareDevil", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.DareDevil)
+end)
+
+MarvellousPlaygroundSection:NewButton("Empty", "Spawn as Empty", function()
+    game.ReplicatedStorage.SelectCharacter.ChangeChar:FireServer(game.ReplicatedStorage.SelectCharacter.Empty)
+end)
+
+GSection:NewButton("Clear the floors", "CLEAR THE DAM FLOORS", function()
+    for i,v in pairs(workspace.Stains:GetChildren()) do
+			local args = {
+			[1] = "Clean",
+			[2] = v.Clean
+			}
+			game:GetService("ReplicatedStorage").Remote:FireServer(unpack(args))
+			end
+end)
+
+GSection:NewButton("Clear the Glasses", "Just clear it", function()
+for i,v in pairs(workspace.Windows:GetChildren()) do
+if string.match(v.Name,"Glass") then
+local args = {
+    [1] = "Clean",
+    [2] = v.Attachment.Clean
+}
+
+game:GetService("ReplicatedStorage").Remote:FireServer(unpack(args))
+end
+end
+end)
+
+GSection:NewButton("Scan items", "Scan items.", function()
+    for i,v in pairs(workspace.Checkouts:GetChildren()) do
+	if string.match(v.Name,"Register") then
+	for e,t in pairs(v.Items:GetChildren()) do
+	local args = {
+		[1] = "ScanItem",
+		[2] = t,
+		[3] = v
+	}
+
+	game:GetService("ReplicatedStorage").Remote:FireServer(unpack(args))
+	end
+	end
+	end
+end)
+
+GSection:NewButton("Repair all the pumps", "Info.", function()
+    for i,v in pairs(workspace.Pumps:GetChildren()) do
+local args = {
+    [1] = "RepairPump",
+    [2] = v
+}
+
+game:GetService("ReplicatedStorage").Remote:FireServer(unpack(args))
+end
+end)
+
+GSection:NewButton("Pump the cars", "Ahhh", function()
+for i,v in pairs(workspace:GetChildren()) do
+if string.match(v.Name,"Car") then
+for e,t in pairs(workspace.Pumps:GetChildren()) do
+game:GetService("ReplicatedStorage").Remote:FireServer("FuelCustomer",v,t)
+end
+end
+end
+end)
+
+GSection:NewButton("Finish Cars", "INFO.", function()
+for i,v in pairs(workspace:GetChildren()) do
+if string.match(v.Name,"Car") then
+for e,t in pairs(workspace.Pumps:GetChildren()) do
+game:GetService("ReplicatedStorage").Remote:FireServer("FinishFuel",v,t)
+end
+end
+end
+end)
+
+GSection:NewButton("Buy BloxBull", "RedBull ripoff", function()
+    game:GetService("ReplicatedStorage").Remote:FireServer("BuyBloxBull",workspace.Vendors.Vendor_BloxBull_1)
+end)
+
+GSection:NewButton("Throw Trashbag", ".", function()
+    local args = {
+    [1] = "ThrowTrashbag",
+    [2] = workspace.Exterior.Dumpster.ThrowTrashbag
+}
+
+game:GetService("ReplicatedStorage").Remote:FireServer(unpack(args))
+
+end)	
